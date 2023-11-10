@@ -15,7 +15,7 @@ task parsing();
         $display("trace file read =%0d",file_read);
       end
       // Writes data to output.txt file
-      file_write=$fopen("output.txt", "w");
+      file_write=$fopen("dram.txt", "w");
       if(file_write) begin
         int i;
         while(1) begin
