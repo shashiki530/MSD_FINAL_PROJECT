@@ -1,8 +1,14 @@
-//Parsing file to read and write input trace file 
+/Parsing file to read and write input trace file 
 
 module parsing_tb#(parameter ENABLE_TEST=0);
 int file_read;   // to read a input trace file
 int file_write;  // to write into output trace file
+int read_value;
+longint  time_unit;
+logic [11:0] core;
+logic [1:0] operation;
+logic [35:0] address;
+
 string line;
 
 task parsing();
@@ -15,12 +21,14 @@ task parsing();
         $display("trace file read =%0d",file_read);
       end
       // Writes data to output.txt file
-      file_write=$fopen("dram.txt", "w");
+      file_write=$fopen("output.txt", "w");
       if(file_write) begin
-        int i;
+        longint i;
         while(1) begin
+          read_value= $fscanf(file_read, "%d %d %d %h", time_unit, core, operation, address);
           if($fgets(line,file_read)) begin
-            $fwrite(file_write,"%s",line);
+            $display("the value of time=%d core=%12d operation=%h, address=%h ",  time_unit, core, operation, address); 
+            $fwrite(file_write, "time value=%d \t core=%d \t operation=%2h \t address=%h \n", time_unit,core,operation,address);
             i++;
           end
           else begin
