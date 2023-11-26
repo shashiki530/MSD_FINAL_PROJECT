@@ -24,8 +24,8 @@ This is the README for the ECE585 Microprocessor System Design Project. Design o
 ## Contributors
 
 - Shashikirana ([shashiki@pdx.edu](mailto:shashiki@pdx.edu))
-- gagana ([gagana@pdx.edu](mailto:gagana@pdx.edu))
-- rahul ([rahulj@pdx.edu](mailto:rahulj@pdx.edu))
+- Gagana ([gagana@pdx.edu](mailto:gagana@pdx.edu))
+- Rahul ([rahulj@pdx.edu](mailto:rahulj@pdx.edu))
 - Raksha ([raksham@pdx.edu](mailto:raksham@pdx.edu))
 
 ## Project Description
