@@ -1,5 +1,4 @@
 # MSD_FINAL_PROJECT
-Memory Scheduling
 # ECE585 Microprocessor System Design Project
 
 ## Table of Contents
