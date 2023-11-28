@@ -1,0 +1,34 @@
+import random
+import csv
+
+# Define the number of rows for your trace file
+num_rows = 1000
+
+# Function to generate random operation
+def generate_operation():
+    operations = ['0', '1', '2']  # Define your operations here
+    return random.choice(operations)
+
+# Generate trace data and write to a CSV file
+with open('trace_file.csv', 'w', newline='') as csvfile:
+    csv_writer = csv.writer(csvfile)
+
+    # Write header with column names
+    csv_writer.writerow(['Time_clock', 'Core', 'Operation', 'Address'])
+
+    # Generate and write random trace data
+    for time in range(num_rows):
+        core = random.randint(0, 11)  # Assuming cores range from 1 to 4
+        operation = generate_operation()
+        address = hex(random.randint(0, 0xFFFFFFFF))  # Generate a random hexadecimal address
+
+        csv_writer.writerow([time, core, operation, address])
+
+print("Trace file generated and saved to 'trace_file.csv'")
+import csv
+
+# Open and read the CSV file
+with open('trace_file.csv', 'r') as csvfile:
+    csv_reader = csv.reader(csvfile)
+    for row in csv_reader:
+        print(', '.join(row))  # Print each row in the CSV file
