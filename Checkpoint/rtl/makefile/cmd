@@ -1,0 +1,1 @@
+vsim -c -do "run -all" work.parsing_tb -gENABLE_TEST=1 +input_file=trace.txt
