@@ -67,11 +67,12 @@ task parsing();
     $display("End of Parsing task");
   
 endtask
+
 //Push each element to master queue
 task mem_ctrl_store(); 
-     temp = {q_oper.pop_front(), q_addr.pop_front()};
-   q_memctrl.push_back(temp);
-   if(ENABLE_TEST) $display("Push new item to master queue(memctrl) queue=%0h, CPU_Time=%0d,memctrl_q_size=%0d", /*$time*/ temp,time_t,q_memctrl.size);
+  temp = {q_oper.pop_front(), q_addr.pop_front()};
+  q_memctrl.push_back(temp);
+  if(ENABLE_TEST) $display("Push new item to master queue(memctrl) queue=%0h, CPU_Time=%0d,memctrl_q_size=%0d", /*$time*/ temp,time_t,q_memctrl.size);
 endtask
 
 // pop out each element from master queue
@@ -188,18 +189,18 @@ end
 
 endtask
 
+// pop out from local queue and push to master queue 
 always@(time_t) begin
   if((full_qu == 0) && (q_time.size()!=0)) begin
-    simulation_t=q_time.pop_front();
+    simulation_t=q_time.pop_front();              
   wait(simulation_t<= time_t);
-   // $display("simulation_t=%0d, time_t=%0d", simulation_t, time_t);
     mem_ctrl_store();
  end
 end
 
 always@(time_t) begin
   if((ENABLE_FULL == 0) && (q_memctrl.size()!=0)) begin
-    if((time_t) % 2 == 0) toggle_out_from_memctrl_q();
+   if((time_t) % 2 == 0) toggle_out_from_memctrl_q();
 end
   end
 
@@ -223,6 +224,8 @@ end
 
 initial begin
 time_t=0;
-#1200 $finish;
+#1000000 $finish;
 end
 endmodule
+
+
