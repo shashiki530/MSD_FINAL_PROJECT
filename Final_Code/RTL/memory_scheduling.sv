@@ -101,12 +101,13 @@ int dimm_temp, dimm_temp1;
          if(ACT==0) begin
            dimm_time = time_t;
            wait(dimm_time <= time_t);
-           $display(" %t \t channel=%d, ACT0 bank_group=%d, bank=%d, row=%0d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-            $fwrite(file_write," %t \t %d ACT0 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+           $display(" %t \t channel=%d, ACT0 bank_group=%d, bank=%d, row=%h", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+            $fwrite(file_write," %t \t %d ACT0 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+
 
           wait(dimm_time+2 <= time_t);
-          $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%0d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-           $fwrite(file_write," %t \t %d ACT1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+          $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%h", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+          $fwrite(file_write," %t \t %d ACT1 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
            ACT = 1; dimm_time = dimm_time + 2;
          end
 
@@ -147,12 +148,12 @@ int dimm_temp, dimm_temp1;
       if(ACT==0) begin
            dimm_time = time_t;
            wait(dimm_time <= time_t);
-           $display(" %t \t channel=%d, ACT0 bank_group=%d, bank=%d, row=%d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-            $fwrite(file_write," %t \t %d ACT0 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+           $display(" %t \t channel=%d, ACT0 bank_group=%d, bank=%d, row=%h", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+            $fwrite(file_write," %t \t %d ACT0 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
 
           wait(dimm_time+2 <= time_t);
-          $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-           $fwrite(file_write," %t \t %d ACT1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+          $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%h", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
+           $fwrite(file_write," %t \t %d ACT1 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
            ACT = 1; dimm_time = dimm_time + 2;
          end
 
@@ -213,9 +214,9 @@ always@(time_t) begin
     empty_qu =1; 
   end
   else empty_qu =0;
-  if(q_memctrl.size == 15) begin
+  if(q_memctrl.size == 15 && q_memctrl.size <= 15) begin
     full_qu=1;
-    // $display(" memory controller queue is full");
+     //$display(" memory controller queue is full");
   end
   else full_qu =0;
 end
@@ -226,7 +227,7 @@ end
 
 initial begin
 time_t=0;
-#1000000 $finish;
+#4000 $finish;
 end
 endmodule
 
