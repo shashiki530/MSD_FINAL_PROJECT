@@ -78,7 +78,7 @@ endtask
 // pop out each element from master queue
 task toggle_out_from_memctrl_q();
    output_data= q_memctrl[0];
-   foreach(q_memctrl[i]) $display("MASTER QUEUE [%0h] = %0h \n",i,q_memctrl[i]);    
+   //foreach(q_memctrl[i]) $display("MASTER QUEUE [%0h] = %0h \n",i,q_memctrl[i]);    
    output_cmd_format(output_data);
    q_memctrl.pop_front();
     if(output_data || (output_data==0)) begin 
@@ -91,6 +91,7 @@ task toggle_out_from_memctrl_q();
 
 // Address decoding 
 task output_cmd_format(input [37:0] output_data);
+int dimm_temp, dimm_temp1;
  if(ENABLE_TEST) begin
       file_write=$fopen("dram.txt","a");// opening file in append mode
      if(file_write!=0) begin
@@ -106,30 +107,31 @@ task output_cmd_format(input [37:0] output_data);
           wait(dimm_time+2 <= time_t);
           $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%0d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
            $fwrite(file_write," %t \t %d ACT1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-           ACT = 1;
+           ACT = 1; dimm_time = dimm_time + 2;
          end
 
 
           if((ACT==1) && (RD==0)) begin
+           
            wait(dimm_time + tRCD <= time_t);
-           $display(" %t \t channel=%d, RD0 bank_group=%d, bank=%d, column=%0d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-           $fwrite(file_write," %t \t %d RD0 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
+           $display(" %t \t channel=%d, RD0 bank_group=%d, bank=%d, column=%h", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
+           $fwrite(file_write," %t \t %d RD0 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
            wait(dimm_time + tRCD + 2 <= time_t);
-           $display(" %t \t channel=%d, RD1 bank_group=%d, bank=%d, column=%0d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-            $fwrite(file_write," %t \t %d RD1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-           RD=1;
+           $display(" %t \t channel=%d, RD1 bank_group=%d, bank=%d, column=%h", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12],output_data[5:2]});
+            $fwrite(file_write," %t \t %d RD1 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
+           RD=1; dimm_time = dimm_time + tRCD + 2;
          end
 
 
           if((ACT==1) && (RD==1) && (PRE==0)) begin
-           wait(dimm_time + tBURST + tCAS + tRCD <= time_t);
+           wait(dimm_time + tBURST + tCAS <= time_t);
            $display(" %t \t channel=%d, PRE bank_group=%d, bank=%d", $time, output_data[6],output_data[9:7],output_data[11:10]);
            $fwrite(file_write," %t \t %d PRE %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10]);
-           PRE=1; ;
+           PRE=1; dimm_time = dimm_time + tCAS + tBURST;
          end
 
            if((ACT==1) && (RD==1) && (PRE==1)) begin
-           wait(dimm_time + tBURST + tCAS + tRCD +tRP <= time_t);
+           wait(dimm_time +tRP <= time_t);
            ACT=0; RD=0; PRE=0; DONE=1;
          end
           $display(" %t \t tRCD=%0d, tBURST=%0d, tCAS=%0d, tRP=%0d \n", $time, tRCD, tBURST, tCAS, tRP);
@@ -151,30 +153,30 @@ task output_cmd_format(input [37:0] output_data);
           wait(dimm_time+2 <= time_t);
           $display(" %t \t channel=%d, ACT1 bank_group=%d, bank=%d, row=%d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
            $fwrite(file_write," %t \t %d ACT1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[33:18]);
-           ACT = 1;
+           ACT = 1; dimm_time = dimm_time + 2;
          end
 
 
-          if((ACT==1) && (RD==0)) begin
+          if((ACT==1) && (WR==0)) begin
            wait(dimm_time + tRCD <= time_t);
-           $display(" %t \t channel=%d, WR0 bank_group=%d, bank=%d, column=%d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-           $fwrite(file_write," %t \t %d WR0 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
+           $display(" %t \t channel=%d, WR0 bank_group=%d, bank=%d, column=%h", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
+           $fwrite(file_write," %t \t %d WR0 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
            wait(dimm_time + tRCD + 2 <= time_t);
-           $display(" %t \t channel=%d, WR1 bank_group=%d, bank=%d, column=%d", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-            $fwrite(file_write," %t \t %d WR1 %d %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10],output_data[17:12]);
-           RD=1;
+           $display(" %t \t channel=%d, WR1 bank_group=%d, bank=%d, column=%h", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
+            $fwrite(file_write," %t \t %d WR1 %d %d %h\n", $time, output_data[6],output_data[9:7],output_data[11:10],{output_data[17:12], output_data[5:2]});
+           WR=1; dimm_time = dimm_time + tRCD + 2;
          end
 
 
-          if((ACT==1) && (RD==1) && (PRE==0)) begin
-           wait(dimm_time + tBURST + tCWL + tRCD + tWR <= time_t);
+          if((ACT==1) && (WR==1) && (PRE==0)) begin
+           wait(dimm_time + tBURST + tCWL  + tWR <= time_t);
            $display(" %t \t channel=%d, PRE bank_group=%d, bank=%d", $time, output_data[6],output_data[9:7],output_data[11:10]);
            $fwrite(file_write," %t \t %d PRE %d %d\n", $time, output_data[6],output_data[9:7],output_data[11:10]);
-           PRE=1; ;
+           PRE=1; dimm_time = dimm_time + tCWL + tBURST + tWR;
          end
-           if((ACT==1) && (RD==1) && (PRE==1)) begin
-           wait(dimm_time + tBURST + tCAS + tWR + tRCD +tRP <= time_t);
-           ACT=0; RD=0; PRE=0; DONE=1;
+           if((ACT==1) && (WR==1) && (PRE==1)) begin
+           wait(dimm_time +tRP <= time_t);
+           ACT=0; WR=0; PRE=0; DONE=1;
            $display("----------------------------------------POP_FRONT------------------------------------------------------------------");
          end
  
@@ -213,7 +215,7 @@ always@(time_t) begin
   else empty_qu =0;
   if(q_memctrl.size == 15) begin
     full_qu=1;
-     $display(" memory controller queue is full");
+    // $display(" memory controller queue is full");
   end
   else full_qu =0;
 end
