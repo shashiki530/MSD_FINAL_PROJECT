@@ -86,7 +86,8 @@ endtask
 // Address decoding logic 
 task output_cmd_format(input [37:0] output_data);
 if(ENABLE_TEST) begin
-  file_write=$fopen("dram.txt","a");// opening file in append mode
+    if($value$plusargs("output_file=%s",output_file))begin
+  file_write=$fopen(output_file,"a");// opening file in append mode
   if(file_write!=0) begin
 
     // READ OPERATIONS
@@ -177,8 +178,9 @@ if(ENABLE_TEST) begin
     end
     $fclose(file_write);
   end 
+end
   else begin
-   $display("error opening the file to write");
+   $display("error :please provide the output_file using +output_file=<filename>");
   end 
 end 
 endtask
