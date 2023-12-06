@@ -1,6 +1,6 @@
 import timing_parameters::*;
 
-module memory_scheduling#(parameter ENABLE_TEST=0, ENABLE_FULL=0);
+module memory_scheduling#(parameter ENABLE_TEST=0);
 int file_read;   // file handler for read
 int file_write;  // to write into output trace file
 int read_value; 
